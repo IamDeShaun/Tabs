@@ -1,0 +1,109 @@
+/*------------------------------------*\
+    $MIXINS
+\*------------------------------------*/
+
+/* CSS Transition
+	Usage: @include transition(width,0.3s,ease-out);
+ */
+ @mixin transition($transition-property, $transition-time, $method) {
+	-webkit-transition: $transition-property $transition-time $method;
+	-moz-transition: $transition-property $transition-time $method;
+	-ms-transition: $transition-property $transition-time $method;
+	-o-transition: $transition-property $transition-time $method;
+	transition: $transition-property $transition-time $method;
+}
+
+/* Rem Unit font sizes with relative fallback http:/seesparkbox.com/foundry/scss_rem_mixin_now_with_a_better_fallback  
+	Usage: @include font-size(1, large);
+*/
+@mixin font-size( $decimal-size, $keyword: null ) {
+  @if $keyword{ font-size: $keyword; }
+  @else { font-size: $decimal-size * $base-font-multiplier * 16px;}
+  font-size: $decimal-size * 1rem;
+}
+
+$breakpoints: (
+  'small':  ( max-width:  450px ),
+  'medium': ( max-width:  780px ),
+  'large':  ( max-width: 1080px ),
+  'xlarge': ( max-width: 1200px ),
+  'min-width-small':( min-width: 450px ),
+  'min-width-medium':( min-width: 780px ),
+  'min-width-large':( min-width: 1080px ),
+  'min-width-xlarge':( min-width: 1200px )
+) !default;
+
+/// @param {String} $breakpoint - Breakpoint name
+/// @require $breakpoints
+@mixin respond-to($breakpoint) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Prints a media query based on the value
+    @media #{inspect(map-get($breakpoints, $breakpoint))} {
+      @content;
+    }
+  }
+ 
+  // If the key doesn't exist in the map
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Mixins
+// --------------------------
+
+@mixin fa-icon {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+}
+
+@mixin fa-icon-rotate($degrees, $rotation) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$rotation})";
+  transform: rotate($degrees);
+}
+
+@mixin fa-icon-flip($horiz, $vert, $rotation) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$rotation}, mirror=1)";
+  transform: scale($horiz, $vert);
+}
+
+
+// Only display content to screen readers. A la Bootstrap 4.
+//
+// See: http://a11yproject.com/posts/how-to-hide-content/
+
+@mixin sr-only {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+// Use in conjunction with .sr-only to only display content when it's focused.
+//
+// Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+//
+// Credit: HTML5 Boilerplate
+
+@mixin sr-only-focusable {
+  &:active,
+  &:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+  }
+}
